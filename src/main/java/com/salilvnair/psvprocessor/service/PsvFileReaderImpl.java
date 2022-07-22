@@ -32,17 +32,18 @@ public class PsvFileReaderImpl extends BasePsvFileReader {
             Map<Integer, String> values = new HashMap<>();
             String line = bulkData.get(i);
             String[] data = line.split("\\|");
-            if(i==0) {
-                //column line
-                for (int c = 0; c < data.length; c++) {
-                    columns.put(data[c], c);
+            for (int v = 0; v < data.length; v++) {
+                if(i == 0) {
+                    //column line data
+                    columns.put(data[v], v);
                 }
-            }
-            else {
-                //value line
-                for (int v = 0; v < data.length; v++) {
+                else {
+                    //value line data
                     values.put(v, data[v]);
                 }
+            }
+            if(i > 0) {
+                //value rows
                 valueRows.put(i, values);
             }
         }
