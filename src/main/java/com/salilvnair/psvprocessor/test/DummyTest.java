@@ -17,21 +17,19 @@ public class DummyTest {
             long from = 1 + (chunkSize*i);
             long to  = from + (chunkSize-1);
             List<DummyClass> dummyClasses = psvFileReader.read(file, DummyClass.class, from, to);
+
+            //do something with data
+            processDummyClasses(dummyClasses);
+
             if(chunkSize != dummyClasses.size()) {
-                //do something with data
-                processDummyClasses(dummyClasses);
                 dummyClasses.clear();
                 break;
-            }
-            else {
-                //do something with data
-                processDummyClasses(dummyClasses);
-                dummyClasses.clear();
             }
         }
     }
 
     private static void processDummyClasses(List<DummyClass> dummyClasses) {
+        //do something with data
     }
 
 }
