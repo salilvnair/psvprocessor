@@ -3,13 +3,9 @@ package com.salilvnair.psvprocessor.service;
 import org.apache.commons.io.LineIterator;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PsvFileReaderImpl extends BasePsvFileReader {
@@ -25,6 +21,40 @@ public class PsvFileReaderImpl extends BasePsvFileReader {
                 }
             }
         }
+        return processBulkData(clazz, columnNameKeyedFieldNameMap, bulkData);
+    }
+
+    public <T> List<T> read(File file, Class<T> clazz, long from, long to) throws IOException, InstantiationException, IllegalAccessException {
+        Map<String, String> columnNameKeyedFieldNameMap = columnNameKeyedFieldNameMap(clazz);
+        List<String> bulkData = new ArrayList<>();
+        try (LineIterator lineIterator = org.apache.commons.io.FileUtils.lineIterator(file)) {
+            int lineNumber = 0;
+            while (lineIterator.hasNext()) {
+                if(lineNumber == 0) {
+                    String line = lineIterator.nextLine();
+                    if(line!=null && line.contains("|")) {
+                        bulkData.add(line);
+                    }
+                }
+                lineNumber++;
+                if(from > lineNumber) {
+                    lineIterator.nextLine();
+                    continue;
+                }
+                String line = lineIterator.nextLine();
+                if(line!=null && line.contains("|")) {
+                    bulkData.add(line);
+                }
+                if(from == to) {
+                    break;
+                }
+                from++;
+            }
+        }
+        return processBulkData(clazz, columnNameKeyedFieldNameMap, bulkData);
+    }
+
+    private <T> List<T> processBulkData(Class<T> clazz, Map<String, String> columnNameKeyedFieldNameMap, List<String> bulkData) throws InstantiationException, IllegalAccessException {
         Map<String, Integer> columns = new HashMap<>();
         Map<Integer, Map<Integer, String>> valueRows = new HashMap<>();
 
@@ -66,4 +96,5 @@ public class PsvFileReaderImpl extends BasePsvFileReader {
 
         return data;
     }
+
 }
