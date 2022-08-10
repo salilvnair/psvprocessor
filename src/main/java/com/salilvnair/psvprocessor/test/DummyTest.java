@@ -8,12 +8,13 @@ import com.salilvnair.psvprocessor.service.PsvFileReaderImpl;
 
 public class DummyTest {
 
+
     public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException {
         PsvFileReader psvFileReader = new PsvFileReaderImpl();
         File file = new File("/Users/salilvnair/Workspace/experiments/psvprocessor/src/main/resources/10million_row_dummy_pipe_data.txt");
         int chunkSize = 1000000;
-        int chunkMaxValue = 100;
-        for (int i = 0; i < chunkMaxValue; i++) {
+        int noOfChunks = 100;
+        for (int i = 0; i < noOfChunks; i++) {
             long from = 1 + (chunkSize*i);
             long to  = from + (chunkSize-1);
             List<DummyClass> dummyClasses = psvFileReader.read(file, DummyClass.class, from, to);
